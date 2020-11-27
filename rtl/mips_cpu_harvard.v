@@ -22,6 +22,7 @@ module mips_cpu_harvard(
 
     typedef enum logic[5:0] {
         OPCODE_R_TYPE = 6'b000000,
+        OPCODE_ADDIU = 6'b001001,
         OPCODE_LW = 6'b100011,
         OPCODE_SW = 6'b101011,
         OPCODE_STP = 6'b111111
@@ -93,7 +94,10 @@ module mips_cpu_harvard(
                         end
                     endcase
                 end
-
+                OPCODE_ADDIU: begin
+                    intern_reg[register_dest] <= ALU_sum;
+                    pc <= pc_increment;
+                end
                 OPCODE_LW: begin
                     intern_reg[register_dest] <= data_readdata;
                     pc <= pc_increment;
