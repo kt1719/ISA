@@ -11,15 +11,15 @@ module ADDRESS_RAM_32x32_HARVARD(
         for (i=0; i<128; i++) begin
             memory[i]=0;
         end
-        memory[0] = 8'hAC;
-        memory[1] = 8'h41;
+        memory[0] = 8'h00;
+        memory[1] = 8'h20;
         memory[2] = 8'h00;
-        memory[3] = 8'h0A;
+        memory[3] = 8'h08;
 
-        memory[4] = 8'h8C;
-        memory[5] = 8'h43;
+        memory[4] = 8'h00;
+        memory[5] = 8'h00;
         memory[6] = 8'h00;
-        memory[7] = 8'h0A;
+        memory[7] = 8'h00;
 
 
     end

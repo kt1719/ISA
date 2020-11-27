@@ -21,10 +21,15 @@ module mips_cpu_harvard(
 );
 
     typedef enum logic[5:0] {
+        OPCODE_R_TYPE = 6'b000000,
         OPCODE_LW = 6'b100011,
         OPCODE_SW = 6'b101011,
         OPCODE_STP = 6'b111111
     } opcode_t;
+
+    typedef enum logic[5:0]{
+        FUNCTION_JR = 6'b001000
+    } function_t;
 
     logic [31:0] intern_reg [31:0]; 
     wire[31:0] register_source, register_destination;
@@ -35,6 +40,8 @@ module mips_cpu_harvard(
 
     logic[4:0] register_addr;
     opcode_t instr_opcode;
+    function_t function_opcode;
+    
     logic[4:0] register_dest;
     logic[15:0] immediate;
     logic[31:0] instr;
@@ -46,6 +53,7 @@ module mips_cpu_harvard(
     assign instr_opcode = instr[31:26];
     assign register_dest = instr[20:16];
     assign immediate = instr[15:0];
+    assign function_opcode = immediate[5:0];
 
     assign register_source = (instr_opcode == OPCODE_LW)? intern_reg[register_addr] : (instr_opcode == OPCODE_SW) ? intern_reg[register_addr] : 32'hxxxxxxxx;
     assign register_v0 = intern_reg[3];
@@ -73,11 +81,19 @@ module mips_cpu_harvard(
             for(index = 0; index<32; index = index+1) begin
                 intern_reg[index] <= 0;
             end
-            intern_reg[1] <= 32'h55509F9F;
+            intern_reg[1] <= 32'h00000009;
         end
         else if(clk_enable) begin
             /* Perform clock update */
             case(instr_opcode)
+                OPCODE_R_TYPE: begin    
+                    case(function_opcode)
+                        FUNCTION_JR: begin
+                            pc <= intern_reg[register_addr];
+                        end
+                    endcase
+                end
+
                 OPCODE_LW: begin
                     intern_reg[register_dest] <= data_readdata;
                     pc <= pc_increment;
